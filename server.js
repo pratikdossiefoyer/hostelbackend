@@ -20,7 +20,10 @@ const app = express();
 const server = http.createServer(app);
 
 setupWebSocket(server);
-
+app.use((req, res, next) => {
+  console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
+  next();
+});
 // Apply middlewares in the correct order
 app.use(cors());
 app.use(morgan("dev"));
@@ -46,8 +49,10 @@ app.use("/uploads", express.static("uploads"));
 app.use("/api/students", studentRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/hostels", hostelRoutes);
-
-const PORT = process.env.PORT || 5000;
+app.get('/', (req, res) => {
+  res.send('Welcome to the Hostel Backend API');
+});
+const PORT = process.env.PORT || 8188;
 const MONGODB_URI =
   process.env.NODE_ENV === "test"
     ? "mongodb://localhost/test_database"
@@ -57,20 +62,24 @@ mongoose
   .connect(MONGODB_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-
     serverSelectionTimeoutMS: 10000,
     socketTimeoutMS: 60000,
     maxPoolSize: 50,
   })
   .then(async () => {
     console.log("Connected to MongoDB");
+    console.log(`MongoDB URI: ${MONGODB_URI}`);
     await initDB();
-    server.listen(PORT, () => {
+    server.listen(PORT, '0.0.0.0', () => {
       console.log(`Server running on port ${PORT}`);
+      console.log(`http://localhost:${PORT}`);
     });
   })
   .catch((error) => {
     console.log("Error connecting to MongoDB:", error);
   });
-
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send('Something broke!');
+});
 export default app;

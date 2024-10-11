@@ -107,7 +107,7 @@ router.get(
         { expiresIn: "1h" }
       );
 
-      const redirectUrl = new URL("http://localhost:3000/oauth-success");
+      const redirectUrl = new URL("https://laturhostel.com/oauth-success");
       redirectUrl.searchParams.append("token", token);
       redirectUrl.searchParams.append("role", user.role.name);
       redirectUrl.searchParams.append("profileId", user.profileId);
@@ -134,7 +134,7 @@ router.get(
     const token = jwt.sign({ id: req.user._id }, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });
-    res.redirect(`http://localhost:3000/oauth-success?token=${token}`);
+    res.redirect(`https://laturhostel.com/oauth-success?token=${token}`);
   }
 );
 
@@ -148,7 +148,7 @@ router.get(
     const token = jwt.sign({ id: req.user._id }, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });
-    res.redirect(`http://localhost:3000/oauth-success?token=${token}`);
+    res.redirect(`https://laturhostel.com/oauth-success?token=${token}`);
   }
 );
 
